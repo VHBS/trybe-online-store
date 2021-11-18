@@ -24,7 +24,7 @@ export default class Categorias extends Component {
     const { categorias } = this.state;
     return (
       <div>
-        <h1>Teste</h1>
+        <h1>Categorias:</h1>
         {categorias.map((categoria) => (
           <label key={ categoria.id } htmlFor={ categoria.id }>
             <input
