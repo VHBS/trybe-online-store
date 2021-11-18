@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import carrinho from '../images/carrinho.png';
 
 class TelaPrincipal extends Component {
   constructor(props) {
@@ -31,6 +33,9 @@ class TelaPrincipal extends Component {
         >
           Digite algum termo de pesquisa ou escolha uma categoria.
         </p>
+        <Link data-testid="shopping-cart-button" to="/Cart">
+          <img className="logo-cart" src={ carrinho } alt="" />
+        </Link>
       </div>
     );
   }
