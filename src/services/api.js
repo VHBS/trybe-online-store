@@ -21,3 +21,10 @@ export async function getProductsFromQuery(query) {
 
   return data.results;
 }
+
+export async function getDetailProduct(item) {
+  const response = await fetch(`https://api.mercadolibre.com/items/${item}`);
+
+  const data = await response.json();
+  return data;
+}
