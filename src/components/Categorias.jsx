@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { getCategories } from '../services/api';
 
 export default class Categorias extends Component {
@@ -22,6 +23,8 @@ export default class Categorias extends Component {
 
   render() {
     const { categorias } = this.state;
+    const { radioSelected } = this.props;
+
     return (
       <div>
         <h1>Categorias:</h1>
@@ -32,6 +35,7 @@ export default class Categorias extends Component {
               data-testid="category"
               id={ categoria.id }
               name="categorias"
+              onChange={ radioSelected }
             />
             { categoria.name }
             <br />
@@ -41,3 +45,7 @@ export default class Categorias extends Component {
     );
   }
 }
+
+Categorias.propTypes = {
+  radioSelected: PropTypes.func,
+}.isRequired;

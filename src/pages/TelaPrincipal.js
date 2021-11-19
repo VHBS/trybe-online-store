@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import CardProducts from '../components/CardProducts';
 import Categorias from '../components/Categorias';
 import carrinho from '../images/carrinho.png';
-import { getProductsFromQuery } from '../services/api';
+import { getProductsFromCategoryAndQuery, getProductsFromQuery } from '../services/api';
 
 class TelaPrincipal extends Component {
   constructor(props) {
@@ -26,6 +26,15 @@ class TelaPrincipal extends Component {
     const resultado = await getProductsFromQuery(pesquisa);
     this.setState({
       products: resultado,
+    });
+  }
+
+  searchProductByCategoryAndQuery = async ({ target: { id } }) => {
+    const { pesquisa } = this.state;
+    const resultado = await getProductsFromCategoryAndQuery(id, pesquisa);
+
+    this.setState({
+      products: resultado.results,
     });
   }
 
@@ -56,7 +65,7 @@ class TelaPrincipal extends Component {
         <Link data-testid="shopping-cart-button" to="/Cart">
           <img className="logo-cart" src={ carrinho } alt="" />
         </Link>
-        <Categorias />
+        <Categorias radioSelected={ this.searchProductByCategoryAndQuery } />
         {products.map((produto, index) => (
           <CardProducts key={ produto.title + index } { ... produto } />
         ))}
