@@ -34,7 +34,7 @@ class TelaPrincipal extends Component {
     const resultado = await getProductsFromCategoryAndQuery(id, pesquisa);
 
     this.setState({
-      products: resultado,
+      products: resultado.results,
     });
   }
 
