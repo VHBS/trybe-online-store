@@ -65,9 +65,18 @@ class TelaPrincipal extends Component {
         <Link data-testid="shopping-cart-button" to="/Cart">
           <img className="logo-cart" src={ carrinho } alt="" />
         </Link>
+
         <Categorias radioSelected={ this.searchProductByCategoryAndQuery } />
+
         {products.map((produto, index) => (
-          <CardProducts key={ produto.title + index } { ... produto } />
+          <Link
+            key={ produto.title + index }
+            data-testid="product-detail-link"
+            to={ { pathname: 'product-details', state: produto } }
+          >
+            {/* <CardProducts key={ produto.title + index } { ... produto } /> */}
+            <CardProducts { ... produto } />
+          </Link>
         ))}
       </div>
     );
