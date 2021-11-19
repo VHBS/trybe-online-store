@@ -11,7 +11,7 @@ export async function getProductsFromCategoryAndQuery(categoryId, query) {
 
   const data = await response.json();
 
-  return data;
+  return data.results;
 }
 
 export async function getProductsFromQuery(query) {
