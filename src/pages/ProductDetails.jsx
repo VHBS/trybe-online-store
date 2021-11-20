@@ -124,8 +124,8 @@ class ProductDetails extends Component {
           </button>
         </form>
 
-        {savedRatings &&
-          savedRatings.map((rating, index) => (
+        {savedRatings
+          && savedRatings.map((rating, index) => (
             <div key={ `${rating.email}${index}` }>
               {console.log(typeof rating)}
               <p>{ rating.email }</p>
@@ -138,8 +138,7 @@ class ProductDetails extends Component {
               />
               <p>{ rating.description }</p>
             </div>
-          ))
-        }
+          ))}
       </>
     );
   }
