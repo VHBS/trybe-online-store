@@ -24,18 +24,11 @@ export default class CardProducts extends Component {
          <h4>{title}</h4>
          <img src={ thumbnail } alt={ title } />
          <p>{ price }</p>
-         <Link
-           to={ { pathname: 'Cart',
-           /* ,  state: { thumbnail, title, price, id, attributes } */ } }
+         {/* <Link
+           to={ { pathname: 'Cart',} }
          >
-           <button
-             type="button"
-             onClick={ () => this.addToCart() }
-             data-testid="product-add-to-cart"
-           >
-             Adicionar ao Carrinho
-           </button>
-         </Link>
+           
+         </Link> */}
        </div>
      );
    }

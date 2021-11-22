@@ -33,19 +33,6 @@ export default class Cart extends Component {
     this.setState(({ valorTotalCart }) => ({ valorTotalCart: valorTotalCart + value }));
   }
 
-  // addToCart = async () => {
-  //   const { productsOnCart: { thumbnail, title, price, id, attributes } } = this.state;
-  //   const objProducts = { thumbnail, title, price, id, attributes };
-  //   const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
-  //   const emptyLocalStorage = [];
-
-  //   const test = (itemsLocalStorage === null) ? emptyLocalStorage
-  //     : itemsLocalStorage;
-
-  //   localStorage.setItem('cartItems',
-  //     JSON.stringify([...test, objProducts]));
-  // }
-
   render() {
     const { productsOnCart, valorTotalCart } = this.state;
     // const { location: { state: { thumbnail, title, price, id, attributes } } } = this.props;
@@ -57,8 +44,8 @@ export default class Cart extends Component {
           <img className="logo-cart" src={ carrinho } alt="" />
         </Link>
         {productsOnCart
-          ? <p data-testid="shopping-cart-product-quantity">{productsOnCart.length}</p>
-          : <p data-testid="shopping-cart-product-quantity">0</p>}
+          ? <p>{productsOnCart.length}</p>
+          : <p>0</p>}
         {!productsOnCart
           ? <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>
           : productsOnCart.map((product) => (
@@ -67,15 +54,9 @@ export default class Cart extends Component {
               { ...product }
               updateCart={ this.updateCart }
               calcValorTotalCart={ this.calcValorTotalCart }
+              getLocalstorage={ this.renderCart }
             />))}
 
-        {/* <button
-          type="button"
-          onClick={ () => this.addToCart() }
-          data-testid="product-add-to-cart"
-        >
-          Adicionar ao Carrinho
-        </button> */}
         <p>{ `Valor total da compra: R$ ${valorTotalCart.toFixed(2)}` }</p>
         <button type="button">Finalizar Compra</button>
       </div>

@@ -7,34 +7,76 @@ export default class ProductCart extends Component {
 
     this.state = {
       quantidade: 1,
+      btnSub: false,
     };
   }
 
   componentDidMount() {
-    const { calcValorTotalCart, price } = this.props;
-    calcValorTotalCart(price);
+    const { calcValorTotalCart, price, quantity } = this.props;
+    calcValorTotalCart(price * quantity);
+
+    this.initialQuantity();
+  }
+
+  initialQuantity = () => {
+    const { quantity } = this.props;
+    if (quantity === 1) this.setState({ btnSub: true });
   }
 
   changeQuantity = (isSum) => {
-    const { calcValorTotalCart, price } = this.props;
+    const { calcValorTotalCart, price, id, getLocalstorage } = this.props;
+    const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
 
     if (isSum === true) {
+      itemsLocalStorage.forEach((item, index) => {
+        if (item.id === id) {
+          itemsLocalStorage[index].quantity += 1;
+
+          localStorage.setItem('cartItems',
+            JSON.stringify([...itemsLocalStorage]));
+
+          getLocalstorage();
+
+          this.setState({ btnSub: false });
+          calcValorTotalCart(price);
+        }
+      });
+    } else {
+      itemsLocalStorage.forEach((item, index) => {
+        if (item.id === id) {
+          itemsLocalStorage[index].quantity -= 1;
+
+          localStorage.setItem('cartItems',
+            JSON.stringify([...itemsLocalStorage]));
+
+          getLocalstorage();
+
+          if (itemsLocalStorage[index].quantity === 1) this.setState({ btnSub: true });
+          calcValorTotalCart(-price);
+        }
+      });
+    }
+
+    /* if (isSum === true) {
       this.setState(({ quantidade }) => ({ quantidade: quantidade + 1 }),
         () => {
           calcValorTotalCart(price);
+          const { quantidade } = this.state;
+          if (quantidade > 1) this.setState({ btnSub: false });
         });
     } else {
       this.setState(({ quantidade }) => (
         (quantidade > 1) ? { quantidade: quantidade - 1 }
           : { quantidade }
       ), () => {
+        const { quantidade } = this.state;
+        if (quantidade === 1) this.setState({ btnSub: true });
         calcValorTotalCart(-price);
       });
-    }
+    } */
   }
 
   deleteItem = () => {
-    // localStorage.removeItem('cartItems');
     const { id, updateCart } = this.props;
     const cartItems = JSON.parse(localStorage.getItem('cartItems'));
     const itens = cartItems.filter((item) => item.id !== id);
@@ -47,15 +89,14 @@ export default class ProductCart extends Component {
 
     updateCart();
 
-    const { calcValorTotalCart, price } = this.props;
-    const { quantidade } = this.state;
-    const total = quantidade * price;
+    const { calcValorTotalCart, price, quantity } = this.props;
+    const total = quantity * price;
     calcValorTotalCart(-total);
   }
 
   render() {
-    const { thumbnail, title, price } = this.props;
-    const { quantidade } = this.state;
+    const { thumbnail, title, price, quantity } = this.props;
+    const { quantidade, btnSub } = this.state;
 
     return (
       <div data-testid="product">
@@ -67,11 +108,12 @@ export default class ProductCart extends Component {
           type="button"
           data-testid="product-decrease-quantity"
           onClick={ () => this.changeQuantity(false) }
+          disabled={ btnSub }
         >
           -
         </button>
 
-        <p>{ quantidade }</p>
+        <p data-testid="shopping-cart-product-quantity">{ quantity }</p>
 
         <button
           type="button"
