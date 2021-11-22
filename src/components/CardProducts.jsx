@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
 export default class CardProducts extends Component {
    addToCart = async () => {
@@ -24,11 +23,6 @@ export default class CardProducts extends Component {
          <h4>{title}</h4>
          <img src={ thumbnail } alt={ title } />
          <p>{ price }</p>
-         {/* <Link
-           to={ { pathname: 'Cart',} }
-         >
-           
-         </Link> */}
        </div>
      );
    }

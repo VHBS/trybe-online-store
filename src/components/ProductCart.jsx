@@ -6,7 +6,6 @@ export default class ProductCart extends Component {
     super(props);
 
     this.state = {
-      quantidade: 1,
       btnSub: false,
     };
   }
@@ -96,7 +95,7 @@ export default class ProductCart extends Component {
 
   render() {
     const { thumbnail, title, price, quantity } = this.props;
-    const { quantidade, btnSub } = this.state;
+    const { btnSub } = this.state;
 
     return (
       <div data-testid="product">
