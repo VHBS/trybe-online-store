@@ -9,10 +9,15 @@ export default class Cart extends Component {
 
     this.state = {
       productsOnCart: [],
+      valorTotalCart: 0,
     };
   }
 
   componentDidMount() {
+    this.renderCart();
+  }
+
+  updateCart = () => {
     this.renderCart();
   }
 
@@ -24,8 +29,12 @@ export default class Cart extends Component {
     });
   }
 
+  calcValorTotalCart = (value) => {
+    this.setState(({ valorTotalCart }) => ({ valorTotalCart: valorTotalCart + value }));
+  }
+
   render() {
-    const { productsOnCart } = this.state;
+    const { productsOnCart, valorTotalCart } = this.state;
     // const { location: { state: { thumbnail, title, price, id, attributes } } } = this.props;
 
     return (
@@ -35,12 +44,21 @@ export default class Cart extends Component {
           <img className="logo-cart" src={ carrinho } alt="" />
         </Link>
         {productsOnCart
-          ? <p data-testid="shopping-cart-product-quantity">{productsOnCart.length}</p>
-          : <p data-testid="shopping-cart-product-quantity">0</p>}
+          ? <p>{productsOnCart.length}</p>
+          : <p>0</p>}
         {!productsOnCart
           ? <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>
           : productsOnCart.map((product) => (
-            <ProductCart key={ product.id } { ...product } />))}
+            <ProductCart
+              key={ product.id }
+              { ...product }
+              updateCart={ this.updateCart }
+              calcValorTotalCart={ this.calcValorTotalCart }
+              getLocalstorage={ this.renderCart }
+            />))}
+
+        <p>{ `Valor total da compra: R$ ${valorTotalCart.toFixed(2)}` }</p>
+        <button type="button">Finalizar Compra</button>
       </div>
     );
   }

@@ -38,6 +38,34 @@ class TelaPrincipal extends Component {
     });
   }
 
+  addToCart = async ({ thumbnail, title, price, id, attributes }) => {
+    // const { thumbnail, title, price, id, attributes } = this.props;
+    const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
+    const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
+    const emptyLocalStorage = [];
+
+    const updateLS = (itemsLocalStorage === null) ? emptyLocalStorage
+      : itemsLocalStorage;
+
+    const test = updateLS.some((item, index) => {
+      if (item.id === objProducts.id) {
+        updateLS[index].quantity += 1;
+
+        localStorage.setItem('cartItems',
+          JSON.stringify([...updateLS]));
+        return true;
+      }
+
+      return false;
+    });
+
+    if (!test) {
+      localStorage.setItem('cartItems',
+        JSON.stringify([...updateLS, objProducts]));
+      return false;
+    }
+  }
+
   render() {
     const { pesquisa, products } = this.state;
 
@@ -68,14 +96,22 @@ class TelaPrincipal extends Component {
         <Categorias radioSelected={ this.searchProductByCategoryAndQuery } />
 
         {products.map((produto, index) => (
-          <Link
-            key={ produto.title + index }
-            data-testid="product-detail-link"
-            to={ { pathname: 'product-details', state: produto } }
-          >
-            {/* <CardProducts key={ produto.title + index } { ... produto } /> */}
-            <CardProducts { ... produto } />
-          </Link>
+          <div key={ produto.title + index }>
+            <Link
+              data-testid="product-detail-link"
+              to={ { pathname: 'product-details', state: produto } }
+            >
+              {/* <CardProducts key={ produto.title + index } { ... produto } /> */}
+              <CardProducts { ... produto } />
+            </Link>
+            <button
+              type="button"
+              onClick={ () => this.addToCart(produto) }
+              data-testid="product-add-to-cart"
+            >
+              Adicionar ao Carrinho
+            </button>
+          </div>
         ))}
       </div>
     );
