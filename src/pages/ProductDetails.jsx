@@ -20,19 +20,32 @@ class ProductDetails extends Component {
     this.getLocalstrorageRatings();
   }
 
-  addToCart = async () => {
-    const { location:
-      { state: { thumbnail, title, price, id, attributes } } } = this.props;
-
-    const objProducts = { thumbnail, title, price, id, attributes };
+  addToCart = async ({ thumbnail, title, price, id, attributes }) => {
+    // const { thumbnail, title, price, id, attributes } = this.props;
+    const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
     const emptyLocalStorage = [];
 
-    const test = (itemsLocalStorage === null) ? emptyLocalStorage
+    const updateLS = (itemsLocalStorage === null) ? emptyLocalStorage
       : itemsLocalStorage;
 
-    localStorage.setItem('cartItems',
-      JSON.stringify([...test, objProducts]));
+    const checkItem = updateLS.some((item, index) => {
+      if (item.id === objProducts.id) {
+        updateLS[index].quantity += 1;
+
+        localStorage.setItem('cartItems',
+          JSON.stringify([...updateLS]));
+        return true;
+      }
+
+      return false;
+    });
+
+    if (!checkItem) {
+      localStorage.setItem('cartItems',
+        JSON.stringify([...updateLS, objProducts]));
+      return false;
+    }
   }
 
   ratingChanged = (newRating) => {
@@ -42,7 +55,6 @@ class ProductDetails extends Component {
 
   handleChange = ({ target: { value, name } }) => {
     this.setState({ [name]: value });
-    console.log('value: ', value, 'name: ', name);
   }
 
   saveRating = () => {
@@ -64,7 +76,8 @@ class ProductDetails extends Component {
   }
 
   render() {
-    const { location: { state: { thumbnail, title, price } } } = this.props;
+    const { location:
+      { state: { thumbnail, title, price, id, attributes } } } = this.props;
     const { email, description, stars, savedRatings } = this.state;
 
     return (
@@ -83,7 +96,8 @@ class ProductDetails extends Component {
           >
             <button
               type="button"
-              onClick={ () => this.addToCart() }
+              onClick={ () => this.addToCart({
+                thumbnail, title, price, id, attributes }) }
               data-testid="product-detail-add-to-cart"
             >
               Adicionar ao Carrinho
