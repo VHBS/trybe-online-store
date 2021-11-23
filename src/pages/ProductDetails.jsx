@@ -94,7 +94,7 @@ class ProductDetails extends Component {
   render() {
     const { location:
       { state: { thumbnail, title, price, id,
-        attributes } } } = this.props;
+        attributes, shipping: { free_shipping: freeShipping } } } } = this.props;
     const { email, description, stars, savedRatings, productsOnCart } = this.state;
 
     return (
@@ -106,6 +106,8 @@ class ProductDetails extends Component {
           <h4 data-testid="product-detail-name">{title}</h4>
           <p>{ price }</p>
           <img src={ thumbnail } alt={ title } />
+          {freeShipping && <p data-testid="free-shipping">Frete Grátis</p>}
+
           <Link
             to={ { pathname: 'Cart' } }
           >
