@@ -7,6 +7,7 @@ export default class ProductCart extends Component {
 
     this.state = {
       btnSub: false,
+      btnSum: false,
     };
   }
 
@@ -19,42 +20,51 @@ export default class ProductCart extends Component {
   }
 
   initialQuantity = () => {
-    const { quantity } = this.props;
+    const { quantity, availableQuantity } = this.props;
     if (quantity === 1) this.setState({ btnSub: true });
+    if (quantity === availableQuantity) this.setState({ btnSum: true });
+  }
+
+  changeQuantitySum = () => {
+    const { calcValorTotalCart, price, id, getLocalstorage } = this.props;
+    const itemsLS = JSON.parse(localStorage.getItem('cartItems'));
+    itemsLS.forEach((item, index) => {
+      if (item.id === id) {
+        itemsLS[index].quantity += 1;
+        localStorage.setItem('cartItems',
+          JSON.stringify([...itemsLS]));
+        getLocalstorage();
+        this.setState({ btnSub: false });
+        if (itemsLS[index].quantity
+          === itemsLS[index].availableQuantity) { this.setState({ btnSum: true }); }
+        calcValorTotalCart(price);
+      }
+    });
+  }
+
+  changeQuantitySub = () => {
+    const { calcValorTotalCart, price, id, getLocalstorage } = this.props;
+    const itemsLS = JSON.parse(localStorage.getItem('cartItems'));
+    itemsLS.forEach((item, index) => {
+      if (item.id === id) {
+        itemsLS[index].quantity -= 1;
+        localStorage.setItem('cartItems',
+          JSON.stringify([...itemsLS]));
+        getLocalstorage();
+        if (itemsLS[index].quantity === 1) this.setState({ btnSub: true });
+        calcValorTotalCart(-price);
+        this.setState({ btnSum: false });
+      }
+    });
   }
 
   changeQuantity = (isSum) => {
-    const { calcValorTotalCart, price, id, getLocalstorage, renderCart } = this.props;
-    const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
+    const { renderCart } = this.props;
 
     if (isSum === true) {
-      itemsLocalStorage.forEach((item, index) => {
-        if (item.id === id) {
-          itemsLocalStorage[index].quantity += 1;
-
-          localStorage.setItem('cartItems',
-            JSON.stringify([...itemsLocalStorage]));
-
-          getLocalstorage();
-
-          this.setState({ btnSub: false });
-          calcValorTotalCart(price);
-        }
-      });
+      this.changeQuantitySum();
     } else {
-      itemsLocalStorage.forEach((item, index) => {
-        if (item.id === id) {
-          itemsLocalStorage[index].quantity -= 1;
-
-          localStorage.setItem('cartItems',
-            JSON.stringify([...itemsLocalStorage]));
-
-          getLocalstorage();
-
-          if (itemsLocalStorage[index].quantity === 1) this.setState({ btnSub: true });
-          calcValorTotalCart(-price);
-        }
-      });
+      this.changeQuantitySub();
     }
     renderCart();
   }
@@ -80,7 +90,7 @@ export default class ProductCart extends Component {
 
   render() {
     const { thumbnail, title, price, quantity } = this.props;
-    const { btnSub } = this.state;
+    const { btnSub, btnSum } = this.state;
 
     return (
       <div data-testid="product">
@@ -103,6 +113,7 @@ export default class ProductCart extends Component {
           type="button"
           data-testid="product-increase-quantity"
           onClick={ () => this.changeQuantity(true) }
+          disabled={ btnSum }
         >
           +
         </button>
