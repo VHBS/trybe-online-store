@@ -43,8 +43,16 @@ class TelaPrincipal extends Component {
     });
   }
 
-  addToCart = async ({ thumbnail, title, price, id, attributes }) => {
-    const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
+  addToCart = async ({ thumbnail, title, price, id, attributes,
+    available_quantity: availableQuantity }) => {
+    const objProducts = { thumbnail,
+      title,
+      price,
+      id,
+      attributes,
+      quantity: 1,
+      availableQuantity,
+    };
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
     const emptyLocalStorage = [];
 

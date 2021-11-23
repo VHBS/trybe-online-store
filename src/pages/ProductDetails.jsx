@@ -22,7 +22,8 @@ class ProductDetails extends Component {
     this.renderCart();
   }
 
-  addToCart = async ({ thumbnail, title, price, id, attributes }) => {
+  addToCart = async ({ thumbnail, title, price, id,
+    attributes }) => {
     const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
     const emptyLocalStorage = [];
@@ -92,7 +93,8 @@ class ProductDetails extends Component {
 
   render() {
     const { location:
-      { state: { thumbnail, title, price, id, attributes } } } = this.props;
+      { state: { thumbnail, title, price, id,
+        attributes } } } = this.props;
     const { email, description, stars, savedRatings, productsOnCart } = this.state;
 
     return (
