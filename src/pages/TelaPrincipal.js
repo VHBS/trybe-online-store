@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import CardProducts from '../components/CardProducts';
 import Categorias from '../components/Categorias';
-import carrinho from '../images/carrinho.png';
 import { getProductsFromCategoryAndQuery, getProductsFromQuery } from '../services/api';
+import CartCounter from '../components/CartCounter';
 
 class TelaPrincipal extends Component {
   constructor(props) {
@@ -12,7 +12,12 @@ class TelaPrincipal extends Component {
     this.state = ({
       pesquisa: '',
       products: [],
+      productsOnCart: 0,
     });
+  }
+
+  componentDidMount() {
+    this.renderCart();
   }
 
   onInputText = ({ target: { value } }) => {
@@ -39,7 +44,6 @@ class TelaPrincipal extends Component {
   }
 
   addToCart = async ({ thumbnail, title, price, id, attributes }) => {
-    // const { thumbnail, title, price, id, attributes } = this.props;
     const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
     const emptyLocalStorage = [];
@@ -53,21 +57,38 @@ class TelaPrincipal extends Component {
 
         localStorage.setItem('cartItems',
           JSON.stringify([...updateLS]));
+        this.renderCart();
         return true;
       }
-
+      this.renderCart();
       return false;
     });
 
     if (!test) {
       localStorage.setItem('cartItems',
         JSON.stringify([...updateLS, objProducts]));
+      this.renderCart();
       return false;
     }
   }
 
+  renderCart = () => {
+    const productsAdded = JSON.parse(localStorage.getItem('cartItems'));
+    if (productsAdded) {
+      const cartCounter = productsAdded
+        .reduce((acc, curr) => acc + curr.quantity, 0);
+      this.setState({
+        productsOnCart: cartCounter,
+      });
+    } else {
+      this.setState({
+        productsOnCart: 0,
+      });
+    }
+  }
+
   render() {
-    const { pesquisa, products } = this.state;
+    const { pesquisa, products, productsOnCart } = this.state;
 
     return (
       <div>
@@ -90,9 +111,7 @@ class TelaPrincipal extends Component {
         >
           Digite algum termo de pesquisa ou escolha uma categoria.
         </p>
-        <Link data-testid="shopping-cart-button" to="/Cart">
-          <img className="logo-cart" src={ carrinho } alt="" />
-        </Link>
+        <CartCounter productsOnCart={ productsOnCart } />
         <Categorias radioSelected={ this.searchProductByCategoryAndQuery } />
 
         {products.map((produto, index) => (
@@ -101,7 +120,6 @@ class TelaPrincipal extends Component {
               data-testid="product-detail-link"
               to={ { pathname: 'product-details', state: produto } }
             >
-              {/* <CardProducts key={ produto.title + index } { ... produto } /> */}
               <CardProducts { ... produto } />
             </Link>
             <button

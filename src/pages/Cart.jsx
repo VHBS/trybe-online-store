@@ -1,32 +1,49 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import carrinho from '../images/carrinho.png';
 import ProductCart from '../components/ProductCart';
+import CartCounter from '../components/CartCounter';
 
 export default class Cart extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      productsOnCart: [],
+      itemsOnCart: [],
       valorTotalCart: 0,
+      productsOnCart: 0,
     };
   }
 
   componentDidMount() {
+    this.renderCartProducts();
     this.renderCart();
   }
 
   updateCart = () => {
+    this.renderCartProducts();
     this.renderCart();
+  }
+
+  renderCartProducts = () => {
+    const productsAdded = JSON.parse(localStorage.getItem('cartItems'));
+
+    this.setState({
+      itemsOnCart: productsAdded,
+    });
   }
 
   renderCart = () => {
     const productsAdded = JSON.parse(localStorage.getItem('cartItems'));
-
-    this.setState({
-      productsOnCart: productsAdded,
-    });
+    if (productsAdded) {
+      const cartCounter = productsAdded
+        .reduce((acc, curr) => acc + curr.quantity, 0);
+      this.setState({
+        productsOnCart: cartCounter,
+      });
+    } else {
+      this.setState({
+        productsOnCart: 0,
+      });
+    }
   }
 
   calcValorTotalCart = (value) => {
@@ -34,27 +51,22 @@ export default class Cart extends Component {
   }
 
   render() {
-    const { productsOnCart, valorTotalCart } = this.state;
-    // const { location: { state: { thumbnail, title, price, id, attributes } } } = this.props;
+    const { itemsOnCart, valorTotalCart, productsOnCart } = this.state;
 
     return (
       <div>
         <h1>Cart</h1>
-        <Link data-testid="shopping-cart-button" to="/Cart">
-          <img className="logo-cart" src={ carrinho } alt="" />
-        </Link>
-        {productsOnCart
-          ? <p>{productsOnCart.length}</p>
-          : <p>0</p>}
-        {!productsOnCart
+        <CartCounter productsOnCart={ productsOnCart } />
+        {!itemsOnCart
           ? <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>
-          : productsOnCart.map((product) => (
+          : itemsOnCart.map((product) => (
             <ProductCart
               key={ product.id }
               { ...product }
               updateCart={ this.updateCart }
               calcValorTotalCart={ this.calcValorTotalCart }
-              getLocalstorage={ this.renderCart }
+              getLocalstorage={ this.renderCartProducts }
+              renderCart={ this.renderCart }
             />))}
 
         <p>{ `Valor total da compra: R$ ${valorTotalCart.toFixed(2)}` }</p>

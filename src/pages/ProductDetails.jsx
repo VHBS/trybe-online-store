@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactStars from 'react-rating-stars-component';
-import carrinho from '../images/carrinho.png';
+import CartCounter from '../components/CartCounter';
 
 class ProductDetails extends Component {
   constructor(props) {
@@ -13,15 +13,16 @@ class ProductDetails extends Component {
       description: '',
       stars: 0,
       savedRatings: [],
+      productsOnCart: 0,
     };
   }
 
   componentDidMount() {
     this.getLocalstrorageRatings();
+    this.renderCart();
   }
 
   addToCart = async ({ thumbnail, title, price, id, attributes }) => {
-    // const { thumbnail, title, price, id, attributes } = this.props;
     const objProducts = { thumbnail, title, price, id, attributes, quantity: 1 };
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
     const emptyLocalStorage = [];
@@ -35,21 +36,22 @@ class ProductDetails extends Component {
 
         localStorage.setItem('cartItems',
           JSON.stringify([...updateLS]));
+        this.renderCart();
         return true;
       }
-
+      this.renderCart();
       return false;
     });
 
     if (!checkItem) {
       localStorage.setItem('cartItems',
         JSON.stringify([...updateLS, objProducts]));
+      this.renderCart();
       return false;
     }
   }
 
   ratingChanged = (newRating) => {
-    // console.log(newRating);
     this.setState({ stars: newRating });
   };
 
@@ -65,27 +67,38 @@ class ProductDetails extends Component {
 
     localStorage.setItem('rating', JSON.stringify([...items, objRating]));
     this.setState({ email: '', description: '', stars: 0 });
-    // this.getLocalstrorageRatings();
   }
 
   getLocalstrorageRatings = () => {
     const savedRatings = JSON.parse(localStorage.getItem('rating'));
-    // console.log('get', typeof savedRatings[0]);
 
     this.setState({ savedRatings });
+  }
+
+  renderCart = () => {
+    const productsAdded = JSON.parse(localStorage.getItem('cartItems'));
+    if (productsAdded) {
+      const cartCounter = productsAdded
+        .reduce((acc, curr) => acc + curr.quantity, 0);
+      this.setState({
+        productsOnCart: cartCounter,
+      });
+    } else {
+      this.setState({
+        productsOnCart: 0,
+      });
+    }
   }
 
   render() {
     const { location:
       { state: { thumbnail, title, price, id, attributes } } } = this.props;
-    const { email, description, stars, savedRatings } = this.state;
+    const { email, description, stars, savedRatings, productsOnCart } = this.state;
 
     return (
       <>
         <header>
-          <Link data-testid="shopping-cart-button" to="/Cart">
-            <img className="logo-cart" src={ carrinho } alt="" />
-          </Link>
+          <CartCounter productsOnCart={ productsOnCart } />
         </header>
         <div className="card-product-details">
           <h4 data-testid="product-detail-name">{title}</h4>
