@@ -11,8 +11,9 @@ export default class ProductCart extends Component {
   }
 
   componentDidMount() {
-    const { calcValorTotalCart, price, quantity } = this.props;
+    const { calcValorTotalCart, price, quantity, renderCart } = this.props;
     calcValorTotalCart(price * quantity);
+    renderCart();
 
     this.initialQuantity();
   }
@@ -23,7 +24,7 @@ export default class ProductCart extends Component {
   }
 
   changeQuantity = (isSum) => {
-    const { calcValorTotalCart, price, id, getLocalstorage } = this.props;
+    const { calcValorTotalCart, price, id, getLocalstorage, renderCart } = this.props;
     const itemsLocalStorage = JSON.parse(localStorage.getItem('cartItems'));
 
     if (isSum === true) {
@@ -55,28 +56,11 @@ export default class ProductCart extends Component {
         }
       });
     }
-
-    /* if (isSum === true) {
-      this.setState(({ quantidade }) => ({ quantidade: quantidade + 1 }),
-        () => {
-          calcValorTotalCart(price);
-          const { quantidade } = this.state;
-          if (quantidade > 1) this.setState({ btnSub: false });
-        });
-    } else {
-      this.setState(({ quantidade }) => (
-        (quantidade > 1) ? { quantidade: quantidade - 1 }
-          : { quantidade }
-      ), () => {
-        const { quantidade } = this.state;
-        if (quantidade === 1) this.setState({ btnSub: true });
-        calcValorTotalCart(-price);
-      });
-    } */
+    renderCart();
   }
 
   deleteItem = () => {
-    const { id, updateCart } = this.props;
+    const { id, updateCart, renderCart } = this.props;
     const cartItems = JSON.parse(localStorage.getItem('cartItems'));
     const itens = cartItems.filter((item) => item.id !== id);
 
@@ -91,6 +75,7 @@ export default class ProductCart extends Component {
     const { calcValorTotalCart, price, quantity } = this.props;
     const total = quantity * price;
     calcValorTotalCart(-total);
+    renderCart();
   }
 
   render() {
