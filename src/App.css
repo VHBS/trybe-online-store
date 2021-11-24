@@ -1,3 +1,7 @@
 .logo-cart {
   height: 30px;
 }
+
+.error {
+  border: 1px red solid;
+}
