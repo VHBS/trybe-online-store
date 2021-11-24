@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import ProductCart from '../components/ProductCart';
 import CartCounter from '../components/CartCounter';
 
@@ -70,7 +71,9 @@ export default class Cart extends Component {
             />))}
 
         <p>{ `Valor total da compra: R$ ${valorTotalCart.toFixed(2)}` }</p>
-        <button type="button">Finalizar Compra</button>
+        <Link to="Checkout">
+          <button data-testid="checkout-products" type="button">Finalizar Compra</button>
+        </Link>
       </div>
     );
   }
