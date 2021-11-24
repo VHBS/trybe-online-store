@@ -16,13 +16,15 @@ export default class CardProducts extends Component {
   }
 
   render() {
-    const { thumbnail, title, price } = this.props;
+    const { thumbnail, title, price,
+      shipping: { free_shipping: freeShipping } } = this.props;
 
     return (
       <div data-testid="product">
         <h4>{title}</h4>
         <img src={ thumbnail } alt={ title } />
         <p>{ price }</p>
+        {freeShipping && <p data-testid="free-shipping">Frete Grátis</p>}
       </div>
     );
   }
